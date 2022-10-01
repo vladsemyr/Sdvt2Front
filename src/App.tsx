@@ -1,29 +1,11 @@
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import DevelopPage from './pages/develop';
+import {BrowserRouter} from 'react-router-dom';
 import LoginPage from './pages/login';
-import Page404 from './pages/page404';
-import Layout from "./components/layout";
-import Main from "./pages/vm-owner/main";
-import VendingMachinesPage from "./pages/vm-owner/vending-machines";
+import React, {Suspense} from "react";
 
 const isAuthorized = true;
 
-const routes: ({ layout?: boolean; path: string; element: () => JSX.Element })[] = [
-    {
-        path: "/",
-        element: Main,
-        layout: true
-    },
-    {
-        path: "/vm",
-        element: VendingMachinesPage,
-        layout: true
-    },
-    {
-        path: "/develop",
-        element: DevelopPage
-    }
-];
+const VmOwnerRoutes = React.lazy(() => import('./role-routes/vm-owner'));
+const AdminRoutes = React.lazy(() => import('./role-routes/admin'));
 
 function App() {
     if (!isAuthorized) {
@@ -31,27 +13,19 @@ function App() {
             <LoginPage/>
         );
     }
-
-    const routeComponents = routes.map((route, key) => (
-        <Route
-            path={route.path}
-            key={key}
-            element={
-                route.layout
-                ? <Layout>{route.element()}</Layout>
-                : route.element()
-            }
-        />
-    ));
+    const ttt = 0;
 
     return (
         <div className="w-screen h-screen">
-            <BrowserRouter basename='/managment'>
-                <Routes>
-                    { routeComponents }
-                    <Route path="*" element={<Page404/>}/>
-                </Routes>
-            </BrowserRouter>
+            <Suspense fallback={<div>Loading...</div>}>
+                <BrowserRouter basename='/management'>
+                    {
+                        ttt
+                            ? <AdminRoutes/>
+                            : <VmOwnerRoutes/>
+                    }
+                </BrowserRouter>
+            </Suspense>
         </div>
     )
 }

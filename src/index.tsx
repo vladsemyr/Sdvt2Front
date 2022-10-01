@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import services from "./services/services";
 import ThemeService from "./services/theme";
+import AuthService from "./services/auth";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,6 +19,7 @@ root.render(
 
 (() => {
     services.themeService = new ThemeService();
+    services.authService = new AuthService();
 })();
 
 

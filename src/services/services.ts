@@ -1,4 +1,5 @@
 import {IThemeService} from "./theme";
+import {IAuthService} from "./iservices/iauth";
 
 class ServiceError extends Error {
     constructor(serviceName: string) {
@@ -7,6 +8,10 @@ class ServiceError extends Error {
 }
 
 class Services {
+
+    private _themeService?: IThemeService;
+    private _authService?: IAuthService;
+
     get themeService(): IThemeService {
         if (this._themeService === undefined) {
             throw new ServiceError("Theme Service")
@@ -17,7 +22,17 @@ class Services {
     set themeService(value: IThemeService) {
         this._themeService = value;
     }
-    private _themeService?: IThemeService;
+
+    get authService(): IAuthService {
+        if (this._authService === undefined) {
+            throw new ServiceError("Auth Service")
+        }
+        return this._authService;
+    }
+
+    set authService(value: IAuthService) {
+        this._authService = value;
+    }
 }
 
 const services = new Services();
