@@ -1,5 +1,5 @@
 import { Theme } from "../static/themes";
-import { IThemeService } from "./iservices/itheme";
+import { IThemeService } from "./iservices/itheme-service";
 
 class ThemeService implements IThemeService {
     private theme: Theme;

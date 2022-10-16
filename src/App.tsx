@@ -1,8 +1,9 @@
 import {BrowserRouter} from 'react-router-dom';
 import LoginPage from './pages/login';
 import React, {Suspense} from "react";
+import UnauthorizedRoutes from "./role-routes/unauthorized";
 
-const isAuthorized = true;
+const isAuthorized = false;
 
 const VmOwnerRoutes = React.lazy(() => import('./role-routes/vm-owner'));
 const AdminRoutes = React.lazy(() => import('./role-routes/admin'));
@@ -10,7 +11,11 @@ const AdminRoutes = React.lazy(() => import('./role-routes/admin'));
 function App() {
     if (!isAuthorized) {
         return (
-            <LoginPage/>
+            <div className="w-screen h-screen text-gray-900 dark:text-gray-400">
+                <BrowserRouter basename='/management'>
+                    <UnauthorizedRoutes />
+                </BrowserRouter>
+            </div>
         );
     }
     const ttt = 0;

@@ -1,4 +1,4 @@
-import {Theme} from "../theme";
+import {Theme} from "../theme-service";
 import {IService} from "./iservice";
 
 

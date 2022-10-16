@@ -1,15 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+//import './index.css';
+import './main.css'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import services from "./services/services";
-import ThemeService from "./services/theme";
-import AuthService from "./services/auth";
+import ThemeService from "./services/theme-service";
+import UserService from "./services/user-service";
+import SessionService from "./services/session-service";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+(() => {
+    services.themeService = new ThemeService();
+    services.userService = new UserService();
+    services.sessionService = new SessionService();
+})();
 
 root.render(
   <React.StrictMode>
@@ -17,10 +25,7 @@ root.render(
   </React.StrictMode>
 );
 
-(() => {
-    services.themeService = new ThemeService();
-    services.authService = new AuthService();
-})();
+
 
 
 // If you want to start measuring performance in your app, pass a function
