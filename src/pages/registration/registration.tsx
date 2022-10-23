@@ -4,25 +4,44 @@ import Input from "../../components/input";
 import Checkbox from "../../components/checkbox";
 import Button from "../../components/button";
 import {Link} from "react-router-dom";
-import React from "react";
+import React, {useEffect} from "react";
 import useSWR from 'swr'
 import useAuth from "../../context/auth";
-
-const fetcher = (input: RequestInfo | URL, init?: RequestInit | undefined) => fetch(input, init).then(res => res.json())
+import {ImSpinner2} from "react-icons/im";
 
 function RegistrationPage() {
     const auth = useAuth();
 
+    const clearPassword = () => {
+        (document.getElementById("password") as HTMLInputElement).value = "";
+    };
+
     const onSubmit: React.FormEventHandler<HTMLFormElement> = async (form) => {
         form.preventDefault();
 
+        auth.clearError();
+
         const formData = new FormData(form.currentTarget);
-        const phone = formData.get("phone");
-        const password = formData.get("password");
+        const phoneValue = formData.get("phone");
+        const passwordValue = formData.get("password");
 
-        const test = await fetcher("/api/registration");
+        if (!phoneValue) {
+            return;
+        }
 
+        if (!passwordValue) {
+            return;
+        }
+
+        const phone = phoneValue.toString();
+        const password = phoneValue.toString();
+
+        auth.signUp(phone, password);
     };
+
+    useEffect(() => {
+        clearPassword();
+    }, [auth.error])
 
     return (
         <div className="flex flex-col justify-center items-center px-6 py-8 h-screen lg:py-0">
@@ -43,16 +62,43 @@ function RegistrationPage() {
                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Телефон
                             </label>
-                            <Input type="tel" name="phone" id="phone" placeholder="+7 (123) 123‒45‒67" required pattern="[0-9]{3}" title="Номер телефона в формате +7 (123) 123‒45‒67"/>
+                            <Input type="tel" name="phone" id="phone" placeholder="+7 (123) 123‒45‒67"
+                                   required pattern="[0-9]{3}"
+                                   title="Номер телефона в формате +7 (123) 123‒45‒67"
+                                   {...auth.loading ? {disabled: true} : {disabled: false}}
+                            />
                         </div>
                         <div>
                             <label htmlFor="password"
                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Пароль</label>
-                            <Input className="w-full" type="password" name="password" id="password" placeholder="••••••••" required/>
+                            <Input className="w-full" type="password" name="password"
+                                   id="password" placeholder="..." required
+                                   {...auth.loading ? {disabled: true} : {disabled: false}}
+                            />
                         </div>
-                        <Button type="submit">
-                            Далее
+                        <Button type="submit" {...auth.loading ? {disabled: true} : {disabled: false}}>
+                            <div className="flex">
+                                {
+                                    auth.loading && (
+                                        <>
+                                            <ImSpinner2 className="animate-spin h-5 w-5 mr-3" />
+                                            Загрузка
+                                        </>
+                                    )
+                                }
+                                {
+                                    !auth.loading && "Далее"
+                                }
+                            </div>
                         </Button>
+                        {
+                            auth.error &&
+                            <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                                <span className="font-medium">
+                                    {auth.error.toString()}
+                                </span>
+                            </p>
+                        }
                     </form>
                 </div>
             </div>

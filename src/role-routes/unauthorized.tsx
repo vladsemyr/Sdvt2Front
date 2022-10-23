@@ -23,9 +23,9 @@ const unauthorizedRoutes: IRoute[] = [
 
 function UnauthorizedRoutes() {
     return (
-        <AuthProvider>
+        <>
             <RouteConverter routes={unauthorizedRoutes} />
-        </AuthProvider>
+        </>
     )
 }
 

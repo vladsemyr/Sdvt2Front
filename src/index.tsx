@@ -8,6 +8,7 @@ import services from "./services/services";
 import ThemeService from "./services/theme-service";
 import UserService from "./services/user-service";
 import SessionService from "./services/session-service";
+import {AuthProvider} from "./context/auth";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -21,7 +22,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App />
+      <App />
   </React.StrictMode>
 );
 

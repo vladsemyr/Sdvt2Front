@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useContext, useEffect, useMemo, useState} from "react";
+import {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {User} from "../interfaces/user";
 import services from "../services/services";
@@ -11,9 +11,10 @@ interface AuthContextType {
     user?: User;
     loading: boolean;
     error?: any;
-    login: (email: string, password: string) => void;
-    signUp: (email: string, name: string, password: string) => void;
+    login: (phone: string, password: string) => void;
+    signUp: (phone: string, password: string) => void;
     logout: () => void;
+    clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>(
@@ -58,36 +59,40 @@ export function AuthProvider({children}: {children: ReactNode;}): JSX.Element {
     //
     // Finally, just signal the component that loading the
     // loading state is over.
-    function login(email: string, password: string) {
+    const login = useCallback((email: string, password: string) => {
         setLoading(true);
 
-        services.sessionService.login()
+        services.sessionService.login({phone: "Asd", password: "asd"})
             .then((user) => {
                 setUser(user);
                 navigation("/");
             })
             .catch((error) => setError(error))
             .finally(() => setLoading(false));
-    }
+    }, [navigation]);
 
-    // Sends sign up details to the server. On success we just apply
+    // Sends sign up details to the server. On success, we just apply
     // the created user to the state.
-    function signUp(email: string, name: string, password: string) {
+    const signUp = useCallback((phone: string, password: string) => {
         setLoading(true);
 
-        services.sessionService.signUp()
+        services.sessionService.signUp({phone, password})
             .then((user) => {
                 setUser(user);
                 navigation("/");
             })
             .catch((error) => setError(error))
             .finally(() => setLoading(false));
-    }
+    }, [navigation]);
 
     // Call the logout endpoint and then remove the user
     // from the state.
     function logout() {
         services.sessionService.logout().then(() => setUser(undefined));
+    }
+
+    function clearError() {
+        setError(undefined);
     }
 
     // Make the provider update only when it should.
@@ -107,8 +112,9 @@ export function AuthProvider({children}: {children: ReactNode;}): JSX.Element {
             login,
             signUp,
             logout,
+            clearError
         }),
-        [user, loading, error]
+        [user, loading, error, login, signUp]
     );
 
     // We only want to render the underlying app after we
